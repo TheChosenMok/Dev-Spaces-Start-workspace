@@ -1,13 +1,56 @@
+import { type CSSProperties, useEffect, useRef, useState } from 'react'
+import {
+  Archive,
+  Bot,
+  FileCode,
+  Info,
+  LayoutGrid,
+  LogOut,
+  Settings,
+  User,
+  type LucideIcon,
+} from 'lucide-react'
 import { CreateWorkspace } from './components/CreateWorkspace'
 
-const NAV_ITEMS = [
-  { label: 'Workspaces', active: true },
-  { label: 'Agent Space', active: false },
-  { label: 'Devfile GUI', active: false },
-  { label: 'Backups', active: false },
+const NAV_ITEMS: { label: string; active: boolean; icon: LucideIcon }[] = [
+  { label: 'Workspaces', active: true, icon: LayoutGrid },
+  { label: 'Agent Space', active: false, icon: Bot },
+  { label: 'Devfile Creator', active: false, icon: FileCode },
+  { label: 'Backups', active: false, icon: Archive },
 ]
 
+const navButtonBase: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  width: '100%',
+  padding: '8px 12px',
+  marginBottom: 2,
+  border: 'none',
+  borderRadius: 6,
+  background: 'transparent',
+  color: '#c8c8c8',
+  fontSize: 16,
+  fontWeight: 400,
+  cursor: 'pointer',
+  transition: 'background 150ms ease, color 150ms ease',
+}
+
 export default function App() {
+  const [signedIn, setSignedIn] = useState(true)
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false)
+  const profileWrapRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onDocMouseDown = (e: MouseEvent) => {
+      if (profileWrapRef.current && !profileWrapRef.current.contains(e.target as Node)) {
+        setProfileMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onDocMouseDown)
+    return () => document.removeEventListener('mousedown', onDocMouseDown)
+  }, [])
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <aside
@@ -52,45 +95,218 @@ export default function App() {
         </div>
 
         <nav style={{ flex: 1, padding: '0 8px' }}>
-          {NAV_ITEMS.map((item) => (
+          {NAV_ITEMS.map((item) => {
+            const NavIcon = item.icon
+            return (
+              <button
+                key={item.label}
+                type="button"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  width: '100%',
+                  padding: '8px 12px',
+                  marginBottom: 2,
+                  border: 'none',
+                  borderRadius: 6,
+                  background: item.active ? '#1f1f1f' : 'transparent',
+                  color: item.active ? '#ffffff' : '#c8c8c8',
+                  fontSize: 16,
+                  fontWeight: item.active ? 500 : 400,
+                  cursor: 'pointer',
+                  transition: 'background 150ms ease, color 150ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  if (!item.active) {
+                    e.currentTarget.style.background = '#161616'
+                    e.currentTarget.style.color = '#ececec'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!item.active) {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = '#c8c8c8'
+                  }
+                }}
+              >
+                <NavIcon size={18} strokeWidth={1.75} aria-hidden />
+                {item.label}
+              </button>
+            )
+          })}
+        </nav>
+
+        <div
+          style={{
+            marginTop: 'auto',
+            borderTop: '1px solid #1f1f1f',
+            padding: '12px 8px 4px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+          }}
+        >
+          <button
+            type="button"
+            style={navButtonBase}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#161616'
+              e.currentTarget.style.color = '#ececec'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.color = '#c8c8c8'
+            }}
+          >
+            <Settings size={18} strokeWidth={1.75} aria-hidden />
+            Settings
+          </button>
+          <button
+            type="button"
+            style={navButtonBase}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#161616'
+              e.currentTarget.style.color = '#ececec'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.color = '#c8c8c8'
+            }}
+          >
+            <Info size={18} strokeWidth={1.75} aria-hidden />
+            About
+          </button>
+
+          <div ref={profileWrapRef} style={{ position: 'relative', display: 'flex', justifyContent: 'center', paddingTop: 4 }}>
             <button
-              key={item.label}
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={profileMenuOpen}
+              onClick={() => setProfileMenuOpen((o) => !o)}
               style={{
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                border: '2px solid #2a2a2a',
+                background: 'linear-gradient(145deg, #2d2d2d, #1a1a1a)',
                 display: 'flex',
                 alignItems: 'center',
-                width: '100%',
-                padding: '8px 12px',
-                marginBottom: 2,
-                border: 'none',
-                borderRadius: 6,
-                background: item.active ? '#1f1f1f' : 'transparent',
-                color: item.active ? '#ffffff' : '#c8c8c8',
-                fontSize: 16,
-                fontWeight: item.active ? 500 : 400,
+                justifyContent: 'center',
+                color: '#e8e8e8',
                 cursor: 'pointer',
-                transition: 'background 150ms ease, color 150ms ease',
+                padding: 0,
+                transition: 'border-color 150ms ease, box-shadow 150ms ease',
               }}
               onMouseEnter={(e) => {
-                if (!item.active) {
-                  e.currentTarget.style.background = '#161616'
-                  e.currentTarget.style.color = '#ececec'
-                }
+                e.currentTarget.style.borderColor = 'var(--accent)'
+                e.currentTarget.style.boxShadow = '0 0 0 2px rgba(88, 166, 255, 0.2)'
               }}
               onMouseLeave={(e) => {
-                if (!item.active) {
-                  e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.color = '#c8c8c8'
-                }
+                e.currentTarget.style.borderColor = '#2a2a2a'
+                e.currentTarget.style.boxShadow = 'none'
               }}
+              title="Account"
             >
-              {item.label}
+              <User size={20} strokeWidth={1.75} aria-hidden />
             </button>
-          ))}
-        </nav>
+
+            {profileMenuOpen && (
+              <div
+                role="menu"
+                style={{
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  marginBottom: 8,
+                  minWidth: 160,
+                  padding: 4,
+                  borderRadius: 8,
+                  background: '#141414',
+                  border: '1px solid #2a2a2a',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+                  zIndex: 20,
+                }}
+              >
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setSignedIn(false)
+                    setProfileMenuOpen(false)
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    width: '100%',
+                    padding: '8px 10px',
+                    border: 'none',
+                    borderRadius: 6,
+                    background: 'transparent',
+                    color: '#e8e8e8',
+                    fontSize: 14,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#1f1f1f'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent'
+                  }}
+                >
+                  <LogOut size={16} strokeWidth={1.75} aria-hidden />
+                  Log out
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </aside>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <CreateWorkspace />
+        {signedIn ? (
+          <CreateWorkspace />
+        ) : (
+          <div
+            style={{
+              minHeight: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 24,
+              background: '#0f0f0f',
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 400,
+                textAlign: 'center',
+                color: '#c8c8c8',
+              }}
+            >
+              <p style={{ margin: '0 0 16px', fontSize: 17, color: '#ececec' }}>You are signed out.</p>
+              <button
+                type="button"
+                onClick={() => setSignedIn(true)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'var(--accent)',
+                  color: '#fff',
+                  fontSize: 15,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                }}
+              >
+                Sign in again
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -192,7 +192,6 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
             {EDITORS.map((e, index) => {
               const isSelected = e.id === value
               const isHighlighted = index === focusedIndex
-              const showDivider = e.isCustom
               const rowBg = isSelected
                 ? 'var(--accent-light)'
                 : isHighlighted
@@ -200,105 +199,84 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                   : 'transparent'
 
               return (
-                <div key={e.id}>
-                  {showDivider && (
-                    <div
-                      role="separator"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        margin: '8px 8px 4px',
-                        color: 'var(--text-muted)',
-                        fontSize: 11,
-                        fontWeight: 600,
-                        letterSpacing: '0.04em',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      <span style={{ flex: 1, height: 1, background: 'var(--border)' }} aria-hidden />
-                      <span>Advanced</span>
-                      <span style={{ flex: 1, height: 1, background: 'var(--border)' }} aria-hidden />
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={isSelected}
-                    data-selected={isSelected}
-                    className="editor-dropdown-option"
+                <button
+                  key={e.id}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  data-selected={isSelected}
+                  className="editor-dropdown-option"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    width: '100%',
+                    padding: '10px 10px',
+                    fontSize: 14,
+                    lineHeight: 1.35,
+                    border: 'none',
+                    background: rowBg,
+                    color: isSelected ? 'var(--accent)' : 'var(--text)',
+                    fontWeight: isSelected ? 600 : 400,
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    transition: 'background var(--transition)',
+                  }}
+                  onMouseEnter={() => setFocusedIndex(index)}
+                  onClick={() => handleSelect(e.id)}
+                >
+                  <span
                     style={{
                       display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 10,
-                      width: '100%',
-                      padding: '10px 10px',
-                      fontSize: 14,
-                      lineHeight: 1.35,
-                      border: 'none',
-                      background: rowBg,
-                      color: isSelected ? 'var(--accent)' : 'var(--text)',
-                      fontWeight: isSelected ? 600 : 400,
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      transition: 'background var(--transition)',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 28,
+                      height: 28,
+                      marginTop: 1,
+                      borderRadius: 6,
+                      background: isSelected ? 'rgba(37, 99, 235, 0.12)' : 'var(--surface-muted)',
+                      flexShrink: 0,
                     }}
-                    onMouseEnter={() => setFocusedIndex(index)}
-                    onClick={() => handleSelect(e.id)}
                   >
-                    <span
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 28,
-                        height: 28,
-                        marginTop: 1,
-                        borderRadius: 6,
-                        background: isSelected ? 'rgba(37, 99, 235, 0.12)' : 'var(--surface-muted)',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {e.isCustom ? (
-                        <Settings2 size={16} color="var(--accent)" strokeWidth={2} />
-                      ) : hasBrandIcon(e.id) ? (
-                        <BrandIcon id={e.id} size={18} />
-                      ) : (
-                        <Monitor size={15} color="var(--text-secondary)" strokeWidth={2} />
-                      )}
-                    </span>
-                    <span style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{ display: 'block' }}>{e.label}</span>
-                      {e.isDefault && (
-                        <span
-                          style={{
-                            display: 'inline-block',
-                            marginTop: 4,
-                            padding: '2px 8px',
-                            fontSize: 11,
-                            fontWeight: 500,
-                            borderRadius: 999,
-                            background: 'rgba(37, 99, 235, 0.1)',
-                            color: 'var(--accent)',
-                          }}
-                        >
-                          Recommended default
-                        </span>
-                      )}
-                    </span>
-                    {isSelected ? (
-                      <Check
-                        size={18}
-                        strokeWidth={2.5}
-                        color="var(--accent)"
-                        style={{ flexShrink: 0, marginTop: 2 }}
-                        aria-hidden
-                      />
+                    {e.isCustom ? (
+                      <Settings2 size={16} color="var(--accent)" strokeWidth={2} />
+                    ) : hasBrandIcon(e.id) ? (
+                      <BrandIcon id={e.id} size={18} />
                     ) : (
-                      <span style={{ width: 18, flexShrink: 0 }} aria-hidden />
+                      <Monitor size={15} color="var(--text-secondary)" strokeWidth={2} />
                     )}
-                  </button>
-                </div>
+                  </span>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ display: 'block' }}>{e.label}</span>
+                    {e.isDefault && (
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          marginTop: 4,
+                          padding: '2px 8px',
+                          fontSize: 11,
+                          fontWeight: 500,
+                          borderRadius: 999,
+                          background: 'rgba(37, 99, 235, 0.1)',
+                          color: 'var(--accent)',
+                        }}
+                      >
+                        Recommended default
+                      </span>
+                    )}
+                  </span>
+                  {isSelected ? (
+                    <Check
+                      size={18}
+                      strokeWidth={2.5}
+                      color="var(--accent)"
+                      style={{ flexShrink: 0, marginTop: 2 }}
+                      aria-hidden
+                    />
+                  ) : (
+                    <span style={{ width: 18, flexShrink: 0 }} aria-hidden />
+                  )}
+                </button>
               )
             })}
           </div>
