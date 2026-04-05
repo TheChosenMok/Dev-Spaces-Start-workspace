@@ -7,6 +7,7 @@
 }
 
 :root {
+  --font-sidebar: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --bg: #ffffff;
   --surface: #ffffff;
   --border: #e2e2e2;
@@ -39,6 +40,12 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.app-sidebar,
+.app-sidebar button {
+  font-family: var(--font-sidebar);
+  font-optical-sizing: auto;
 }
 
 #root {

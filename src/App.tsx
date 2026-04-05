@@ -22,16 +22,17 @@ const NAV_ITEMS: { label: string; active: boolean; icon: LucideIcon }[] = [
 const navButtonBase: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
+  gap: 10,
   width: '100%',
-  padding: '8px 12px',
+  padding: '10px 12px',
   marginBottom: 2,
   border: 'none',
   borderRadius: 6,
   background: 'transparent',
   color: '#c8c8c8',
-  fontSize: 16,
+  fontSize: 15,
   fontWeight: 400,
+  letterSpacing: '-0.01em',
   cursor: 'pointer',
   transition: 'background 150ms ease, color 150ms ease',
 }
@@ -54,14 +55,16 @@ export default function App() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <aside
+        className="app-sidebar"
         style={{
-          width: 240,
+          width: 252,
           flexShrink: 0,
           background: '#0a0a0a',
           borderRight: '1px solid #1f1f1f',
           display: 'flex',
           flexDirection: 'column',
           padding: '20px 0',
+          letterSpacing: '-0.02em',
         }}
       >
         <div
@@ -76,22 +79,31 @@ export default function App() {
         >
           <div
             style={{
-              width: 30,
-              height: 30,
-              borderRadius: 6,
+              width: 36,
+              height: 36,
+              borderRadius: 8,
               background: 'var(--accent)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#fff',
               fontWeight: 700,
-              fontSize: 16,
+              fontSize: 17,
               flexShrink: 0,
             }}
           >
             W
           </div>
-          <span style={{ fontSize: 17, fontWeight: 600, color: '#ffffff' }}>Dev Spaces</span>
+          <span
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: '#ffffff',
+              letterSpacing: '-0.025em',
+            }}
+          >
+            Dev Spaces
+          </span>
         </div>
 
         <nav style={{ flex: 1, padding: '0 8px' }}>
@@ -104,16 +116,17 @@ export default function App() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 8,
+                  gap: 10,
                   width: '100%',
-                  padding: '8px 12px',
+                  padding: '10px 12px',
                   marginBottom: 2,
                   border: 'none',
                   borderRadius: 6,
                   background: item.active ? '#1f1f1f' : 'transparent',
                   color: item.active ? '#ffffff' : '#c8c8c8',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: item.active ? 500 : 400,
+                  letterSpacing: '-0.01em',
                   cursor: 'pointer',
                   transition: 'background 150ms ease, color 150ms ease',
                 }}
@@ -130,7 +143,7 @@ export default function App() {
                   }
                 }}
               >
-                <NavIcon size={18} strokeWidth={1.75} aria-hidden />
+                <NavIcon size={20} strokeWidth={1.75} aria-hidden />
                 {item.label}
               </button>
             )
@@ -159,7 +172,7 @@ export default function App() {
               e.currentTarget.style.color = '#c8c8c8'
             }}
           >
-            <Settings size={18} strokeWidth={1.75} aria-hidden />
+            <Settings size={20} strokeWidth={1.75} aria-hidden />
             Settings
           </button>
           <button
@@ -174,7 +187,7 @@ export default function App() {
               e.currentTarget.style.color = '#c8c8c8'
             }}
           >
-            <Info size={18} strokeWidth={1.75} aria-hidden />
+            <Info size={20} strokeWidth={1.75} aria-hidden />
             About
           </button>
 
@@ -185,8 +198,8 @@ export default function App() {
               aria-expanded={profileMenuOpen}
               onClick={() => setProfileMenuOpen((o) => !o)}
               style={{
-                width: 40,
-                height: 40,
+                width: 44,
+                height: 44,
                 borderRadius: '50%',
                 border: '2px solid #2a2a2a',
                 background: 'linear-gradient(145deg, #2d2d2d, #1a1a1a)',
@@ -208,7 +221,7 @@ export default function App() {
               }}
               title="Account"
             >
-              <User size={20} strokeWidth={1.75} aria-hidden />
+              <User size={22} strokeWidth={1.75} aria-hidden />
             </button>
 
             {profileMenuOpen && (
@@ -220,7 +233,7 @@ export default function App() {
                   left: '50%',
                   transform: 'translateX(-50%)',
                   marginBottom: 8,
-                  minWidth: 160,
+                  minWidth: 176,
                   padding: 4,
                   borderRadius: 8,
                   background: '#141414',
@@ -241,12 +254,14 @@ export default function App() {
                     alignItems: 'center',
                     gap: 8,
                     width: '100%',
-                    padding: '8px 10px',
+                    padding: '10px 12px',
                     border: 'none',
                     borderRadius: 6,
                     background: 'transparent',
                     color: '#e8e8e8',
-                    fontSize: 14,
+                    fontSize: 15,
+                    fontWeight: 400,
+                    letterSpacing: '-0.01em',
                     cursor: 'pointer',
                     textAlign: 'left',
                   }}
@@ -257,7 +272,7 @@ export default function App() {
                     e.currentTarget.style.background = 'transparent'
                   }}
                 >
-                  <LogOut size={16} strokeWidth={1.75} aria-hidden />
+                  <LogOut size={18} strokeWidth={1.75} aria-hidden />
                   Log out
                 </button>
               </div>
