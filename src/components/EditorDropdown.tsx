@@ -1,17 +1,17 @@
-import { useState, useRef } from 'react'
-import { ChevronDown, Monitor } from 'lucide-react'
+import { useState, useRef, useEffect, useId, type KeyboardEvent } from 'react'
+import { ChevronDown, Check, Monitor, Settings2 } from 'lucide-react'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { CustomEditorModal } from './CustomEditorModal'
 import { BrandIcon, hasBrandIcon } from './BrandIcons'
 
 const EDITORS = [
-  { id: 'vscode-oss', label: 'Microsoft Visual Studio Code - Open Source', isDefault: true },
-  { id: 'vscode', label: 'Visual Studio Code' },
-  { id: 'intellij', label: 'IntelliJ IDEA Ultimate' },
-  { id: 'goland', label: 'GoLand' },
-  { id: 'pycharm', label: 'PyCharm Professional' },
-  { id: 'webstorm', label: 'WebStorm' },
-  { id: 'custom', label: 'Custom Editor' },
+  { id: 'vscode-oss', label: 'Microsoft Visual Studio Code - Open Source', shortLabel: 'VS Code (OSS)', isDefault: true },
+  { id: 'vscode', label: 'Visual Studio Code', shortLabel: 'VS Code' },
+  { id: 'intellij', label: 'IntelliJ IDEA Ultimate', shortLabel: 'IntelliJ' },
+  { id: 'goland', label: 'GoLand', shortLabel: 'GoLand' },
+  { id: 'pycharm', label: 'PyCharm Professional', shortLabel: 'PyCharm' },
+  { id: 'webstorm', label: 'WebStorm', shortLabel: 'WebStorm' },
+  { id: 'custom', label: 'Custom Editor', shortLabel: 'Custom', isCustom: true as const },
 ]
 
 interface EditorDropdownProps {
@@ -20,12 +20,22 @@ interface EditorDropdownProps {
 }
 
 export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
+  const listId = useId()
   const [open, setOpen] = useState(false)
+  const [focusedIndex, setFocusedIndex] = useState(0)
   const [showCustomModal, setShowCustomModal] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   useClickOutside(ref, () => setOpen(false))
 
   const selected = EDITORS.find((e) => e.id === value)
+
+  useEffect(() => {
+    if (open) {
+      const idx = EDITORS.findIndex((x) => x.id === value)
+      setFocusedIndex(idx >= 0 ? idx : 0)
+    }
+  }, [open, value])
 
   function handleSelect(id: string) {
     if (id === 'custom') {
@@ -34,20 +44,75 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
       onChange(id)
     }
     setOpen(false)
+    triggerRef.current?.focus()
   }
+
+  function handleContainerKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    if (!open) {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        setOpen(true)
+      }
+      return
+    }
+
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault()
+        setOpen(false)
+        triggerRef.current?.focus()
+        break
+      case 'ArrowDown': {
+        e.preventDefault()
+        setFocusedIndex((i) => Math.min(i + 1, EDITORS.length - 1))
+        break
+      }
+      case 'ArrowUp': {
+        e.preventDefault()
+        setFocusedIndex((i) => Math.max(i - 1, 0))
+        break
+      }
+      case 'Home':
+        e.preventDefault()
+        setFocusedIndex(0)
+        break
+      case 'End':
+        e.preventDefault()
+        setFocusedIndex(EDITORS.length - 1)
+        break
+      case 'Enter':
+      case ' ': {
+        e.preventDefault()
+        const id = EDITORS[focusedIndex]?.id
+        if (id) handleSelect(id)
+        break
+      }
+      default:
+        break
+    }
+  }
+
+  const displayLabel = selected ? selected.shortLabel : 'Select editor'
 
   return (
     <>
-      <div ref={ref} style={{ position: 'relative' }}>
+      <div ref={ref} style={{ position: 'relative' }} onKeyDown={handleContainerKeyDown}>
         <button
+          ref={triggerRef}
           type="button"
+          id={`${listId}-trigger`}
+          className="editor-dropdown-trigger"
+          data-open={open}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={open ? listId : undefined}
           onClick={() => setOpen(!open)}
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
+            gap: 10,
             width: '100%',
-            height: 38,
+            minHeight: 42,
             padding: '0 12px',
             fontSize: 15,
             border: '1px solid var(--border)',
@@ -56,64 +121,186 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
             color: 'var(--text)',
             cursor: 'pointer',
             textAlign: 'left',
-            transition: 'border-color var(--transition)',
+            transition: 'border-color var(--transition), box-shadow var(--transition)',
           }}
         >
-          {selected && hasBrandIcon(selected.id) ? <BrandIcon id={selected.id} size={16} /> : <Monitor size={14} />}
-          <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {selected?.label ?? 'Select editor'}
+          <span
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 28,
+              height: 28,
+              borderRadius: 6,
+              background: 'var(--surface-muted)',
+              flexShrink: 0,
+            }}
+          >
+            {selected?.id === 'custom' ? (
+              <Settings2 size={16} color="var(--accent)" strokeWidth={2} />
+            ) : selected && hasBrandIcon(selected.id) ? (
+              <BrandIcon id={selected.id} size={18} />
+            ) : (
+              <Monitor size={16} color="var(--text-secondary)" strokeWidth={2} />
+            )}
           </span>
-          <ChevronDown size={14} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform var(--transition)' }} />
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontWeight: 500,
+            }}
+          >
+            {displayLabel}
+          </span>
+          <ChevronDown
+            size={16}
+            color="var(--text-muted)"
+            strokeWidth={2}
+            style={{
+              flexShrink: 0,
+              transform: open ? 'rotate(180deg)' : 'none',
+              transition: 'transform var(--transition)',
+            }}
+            aria-hidden
+          />
         </button>
 
         {open && (
           <div
+            id={listId}
+            role="listbox"
+            aria-labelledby={`${listId}-trigger`}
+            className="editor-dropdown-panel"
             style={{
               position: 'absolute',
-              top: 'calc(100% + 4px)',
+              top: 'calc(100% + 6px)',
               left: 0,
               right: 0,
               background: 'var(--surface)',
               border: '1px solid var(--border)',
-              borderRadius: 'var(--radius)',
+              borderRadius: 'var(--radius-lg)',
               boxShadow: 'var(--shadow-lg)',
               zIndex: 50,
-              maxHeight: 240,
+              maxHeight: 280,
               overflowY: 'auto',
             }}
           >
-            {EDITORS.map((e) => (
-              <button
-                type="button"
-                key={e.id}
-                onClick={() => handleSelect(e.id)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  width: '100%',
-                  padding: '8px 12px',
-                  fontSize: 14,
-                  border: 'none',
-                  borderBottom: e.id === 'custom' ? 'none' : undefined,
-                  borderTop: e.id === 'custom' ? '1px solid var(--border)' : 'none',
-                  background: e.id === value ? 'var(--accent-light)' : 'transparent',
-                  color: e.id === value ? 'var(--accent)' : e.id === 'custom' ? 'var(--accent)' : 'var(--text)',
-                  fontWeight: e.id === 'custom' ? 500 : 400,
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  transition: 'background var(--transition)',
-                }}
-                onMouseEnter={(ev) => { if (e.id !== value) ev.currentTarget.style.background = '#f5f5f5' }}
-                onMouseLeave={(ev) => { ev.currentTarget.style.background = e.id === value ? 'var(--accent-light)' : 'transparent' }}
-              >
-                {hasBrandIcon(e.id) ? <BrandIcon id={e.id} size={16} /> : <Monitor size={12} />}
-                {e.label}
-                {e.isDefault && (
-                  <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)', fontWeight: 400 }}>default</span>
-                )}
-              </button>
-            ))}
+            {EDITORS.map((e, index) => {
+              const isSelected = e.id === value
+              const isHighlighted = index === focusedIndex
+              const showDivider = e.isCustom
+              const rowBg = isSelected
+                ? 'var(--accent-light)'
+                : isHighlighted
+                  ? 'var(--surface-hover)'
+                  : 'transparent'
+
+              return (
+                <div key={e.id}>
+                  {showDivider && (
+                    <div
+                      role="separator"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        margin: '8px 8px 4px',
+                        color: 'var(--text-muted)',
+                        fontSize: 11,
+                        fontWeight: 600,
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      <span style={{ flex: 1, height: 1, background: 'var(--border)' }} aria-hidden />
+                      <span>Advanced</span>
+                      <span style={{ flex: 1, height: 1, background: 'var(--border)' }} aria-hidden />
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    data-selected={isSelected}
+                    className="editor-dropdown-option"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 10,
+                      width: '100%',
+                      padding: '10px 10px',
+                      fontSize: 14,
+                      lineHeight: 1.35,
+                      border: 'none',
+                      background: rowBg,
+                      color: isSelected ? 'var(--accent)' : 'var(--text)',
+                      fontWeight: isSelected ? 600 : 400,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'background var(--transition)',
+                    }}
+                    onMouseEnter={() => setFocusedIndex(index)}
+                    onClick={() => handleSelect(e.id)}
+                  >
+                    <span
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 28,
+                        height: 28,
+                        marginTop: 1,
+                        borderRadius: 6,
+                        background: isSelected ? 'rgba(37, 99, 235, 0.12)' : 'var(--surface-muted)',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {e.isCustom ? (
+                        <Settings2 size={16} color="var(--accent)" strokeWidth={2} />
+                      ) : hasBrandIcon(e.id) ? (
+                        <BrandIcon id={e.id} size={18} />
+                      ) : (
+                        <Monitor size={15} color="var(--text-secondary)" strokeWidth={2} />
+                      )}
+                    </span>
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ display: 'block' }}>{e.label}</span>
+                      {e.isDefault && (
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            marginTop: 4,
+                            padding: '2px 8px',
+                            fontSize: 11,
+                            fontWeight: 500,
+                            borderRadius: 999,
+                            background: 'rgba(37, 99, 235, 0.1)',
+                            color: 'var(--accent)',
+                          }}
+                        >
+                          Recommended default
+                        </span>
+                      )}
+                    </span>
+                    {isSelected ? (
+                      <Check
+                        size={18}
+                        strokeWidth={2.5}
+                        color="var(--accent)"
+                        style={{ flexShrink: 0, marginTop: 2 }}
+                        aria-hidden
+                      />
+                    ) : (
+                      <span style={{ width: 18, flexShrink: 0 }} aria-hidden />
+                    )}
+                  </button>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
