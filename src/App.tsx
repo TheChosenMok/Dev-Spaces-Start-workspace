@@ -37,8 +37,16 @@ const navButtonBase: CSSProperties = {
   transition: 'background 150ms ease, color 150ms ease',
 }
 
+/** Slightly tighter padding and no extra margin — footer uses flex gap only */
+const sidebarFooterButtonBase: CSSProperties = {
+  ...navButtonBase,
+  marginBottom: 0,
+  padding: '8px 12px',
+}
+
 export default function App() {
   const [signedIn, setSignedIn] = useState(true)
+  const [username] = useState('jane.doe')
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const profileWrapRef = useRef<HTMLDivElement>(null)
 
@@ -154,15 +162,15 @@ export default function App() {
           style={{
             marginTop: 'auto',
             borderTop: '1px solid #1f1f1f',
-            padding: '12px 8px 4px',
+            padding: '8px 8px 4px',
             display: 'flex',
             flexDirection: 'column',
-            gap: 8,
+            gap: 2,
           }}
         >
           <button
             type="button"
-            style={navButtonBase}
+            style={sidebarFooterButtonBase}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#161616'
               e.currentTarget.style.color = '#ececec'
@@ -177,7 +185,7 @@ export default function App() {
           </button>
           <button
             type="button"
-            style={navButtonBase}
+            style={sidebarFooterButtonBase}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#161616'
               e.currentTarget.style.color = '#ececec'
@@ -191,37 +199,54 @@ export default function App() {
             About
           </button>
 
-          <div ref={profileWrapRef} style={{ position: 'relative', display: 'flex', justifyContent: 'center', paddingTop: 4 }}>
+          <div ref={profileWrapRef} style={{ position: 'relative' }}>
             <button
               type="button"
               aria-haspopup="menu"
               aria-expanded={profileMenuOpen}
+              aria-label={`Account, ${username}`}
               onClick={() => setProfileMenuOpen((o) => !o)}
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                border: '2px solid #2a2a2a',
-                background: 'linear-gradient(145deg, #2d2d2d, #1a1a1a)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#e8e8e8',
-                cursor: 'pointer',
-                padding: 0,
-                transition: 'border-color 150ms ease, box-shadow 150ms ease',
-              }}
+              style={sidebarFooterButtonBase}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--accent)'
-                e.currentTarget.style.boxShadow = '0 0 0 2px rgba(88, 166, 255, 0.2)'
+                e.currentTarget.style.background = '#161616'
+                e.currentTarget.style.color = '#ececec'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#2a2a2a'
-                e.currentTarget.style.boxShadow = 'none'
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.color = '#c8c8c8'
               }}
               title="Account"
             >
-              <User size={22} strokeWidth={1.75} aria-hidden />
+              <span
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: '50%',
+                  border: '2px solid #2a2a2a',
+                  background: 'linear-gradient(145deg, #2d2d2d, #1a1a1a)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#e8e8e8',
+                  flexShrink: 0,
+                }}
+              >
+                <User size={20} strokeWidth={1.75} aria-hidden />
+              </span>
+              <span
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'left',
+                  fontWeight: 500,
+                  color: 'inherit',
+                }}
+              >
+                {username}
+              </span>
             </button>
 
             {profileMenuOpen && (
@@ -230,8 +255,7 @@ export default function App() {
                 style={{
                   position: 'absolute',
                   bottom: '100%',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
+                  left: 0,
                   marginBottom: 8,
                   minWidth: 176,
                   padding: 4,
