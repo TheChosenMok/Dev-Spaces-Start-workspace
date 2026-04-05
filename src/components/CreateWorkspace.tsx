@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Rocket } from 'lucide-react'
 import { FormField } from './FormField'
 import { TextInput } from './TextInput'
 import { BranchDropdown } from './BranchDropdown'
@@ -153,37 +153,48 @@ export function CreateWorkspace() {
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            disabled={submitting}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              width: '100%',
-              height: 44,
-              fontSize: 16,
-              fontWeight: 600,
-              border: 'none',
-              borderRadius: 'var(--radius)',
-              background: submitting ? 'var(--accent-hover)' : 'var(--accent)',
-              color: '#fff',
-              cursor: submitting ? 'not-allowed' : 'pointer',
-              transition: 'background var(--transition)',
-            }}
-            onMouseEnter={(e) => { if (!submitting) e.currentTarget.style.background = 'var(--accent-hover)' }}
-            onMouseLeave={(e) => { if (!submitting) e.currentTarget.style.background = 'var(--accent)' }}
-          >
-            {submitting ? (
-              <>
-                <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
-                Creating Workspace…
-              </>
-            ) : (
-              'Create Workspace'
-            )}
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <button
+              type="submit"
+              disabled={submitting}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 10,
+                width: 'auto',
+                padding: '11px 22px',
+                minHeight: 42,
+                fontSize: 15,
+                fontWeight: 600,
+                letterSpacing: '-0.02em',
+                border: 'none',
+                borderRadius: 9999,
+                background: submitting ? 'var(--accent-hover)' : 'var(--accent)',
+                color: '#fff',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                transition: 'background var(--transition)',
+              }}
+              onMouseEnter={(e) => {
+                if (!submitting) e.currentTarget.style.background = 'var(--accent-hover)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = submitting ? 'var(--accent-hover)' : 'var(--accent)'
+              }}
+            >
+              {submitting ? (
+                <>
+                  <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                  Creating Workspace…
+                </>
+              ) : (
+                <>
+                  <Rocket size={18} strokeWidth={2.25} aria-hidden />
+                  Create Workspace
+                </>
+              )}
+            </button>
+          </div>
         </form>
       </main>
 
