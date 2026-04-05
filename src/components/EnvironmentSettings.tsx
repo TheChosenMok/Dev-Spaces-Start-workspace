@@ -63,7 +63,7 @@ export function EnvironmentSettings({ value, onChange }: EnvironmentSettingsProp
       </button>
 
       {expanded && (
-        <div style={{ padding: '16px 16px 0', borderTop: '1px solid var(--border)' }}>
+        <div style={{ padding: '20px 16px 0', borderTop: '1px solid var(--border)' }}>
           <FormField
             label="Container Image"
             tooltip="Override the default Universal Developer Image. Specify a custom container image for your workspace runtime."

@@ -1,0 +1,199 @@
+import { useState, useCallback } from 'react'
+import { Loader2 } from 'lucide-react'
+import { FormField } from './FormField'
+import { TextInput } from './TextInput'
+import { BranchDropdown } from './BranchDropdown'
+import { EditorDropdown } from './EditorDropdown'
+import { AIToolsSection } from './AIToolsSection'
+import { EnvironmentSettings } from './EnvironmentSettings'
+
+const EXISTING_WORKSPACES = [
+  'https://github.com/acme/web-app',
+  'https://github.com/acme/api-service',
+  'https://github.com/acme/infra',
+]
+
+export function CreateWorkspace() {
+  const [name, setName] = useState('')
+  const [repoUrl, setRepoUrl] = useState('')
+  const [branch, setBranch] = useState('main')
+  const [editor, setEditor] = useState('vscode-oss')
+  const [aiTools, setAiTools] = useState<string[]>([])
+  const [envSettings, setEnvSettings] = useState({
+    containerImage: '',
+    tempStorage: false,
+    memoryLimit: '',
+    cpuLimit: '',
+    devfilePath: '',
+  })
+  const [submitting, setSubmitting] = useState(false)
+
+  const isDuplicate = repoUrl.trim() !== '' && EXISTING_WORKSPACES.some(
+    (ws) => ws.toLowerCase() === repoUrl.trim().toLowerCase(),
+  )
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+    setTimeout(() => setSubmitting(false), 2000)
+  }, [])
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+      {/* Header */}
+      <header
+        style={{
+          borderBottom: '1px solid var(--border)',
+          background: 'var(--surface)',
+        }}
+      >
+        <div
+          style={{
+            padding: '16px 32px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
+          <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)' }}>Workspaces</span>
+        </div>
+      </header>
+
+      {/* Main */}
+      <main style={{ maxWidth: 720, padding: '32px 32px 64px' }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Create Workspace</h1>
+        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 32 }}>
+          Configure and launch a new cloud development environment.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-lg)',
+              padding: 24,
+              marginBottom: 24,
+            }}
+          >
+            {/* Workspace Name */}
+            <FormField
+              label="Workspace Name"
+              tooltip="A human-readable name for your workspace. This will be used to identify it in the dashboard and CLI."
+              htmlFor="workspace-name"
+            >
+              <TextInput
+                id="workspace-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="my-project"
+              />
+            </FormField>
+
+            {/* Git Repository URL + Branch */}
+            <FormField
+              label="Git Repository URL"
+              tooltip="Enter the HTTPS or SSH URL of your Git repository. Leave blank to provision an empty workspace using the default Universal Developer Image."
+              htmlFor="repo-url"
+            >
+              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: 240 }}>
+                  <TextInput
+                    id="repo-url"
+                    value={repoUrl}
+                    onChange={(e) => setRepoUrl(e.target.value)}
+                    placeholder="https://github.com/org/repo"
+                  />
+                  {isDuplicate && (
+                    <div
+                      style={{
+                        marginTop: 8,
+                        padding: '8px 12px',
+                        fontSize: 13,
+                        background: 'var(--warning-bg)',
+                        border: '1px solid var(--warning-border)',
+                        borderRadius: 6,
+                        color: '#92400e',
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      A workspace using this repository already exists. You can still create a new one.
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <BranchDropdown
+                    value={branch}
+                    onChange={setBranch}
+                    disabled={repoUrl.trim() === ''}
+                  />
+                </div>
+              </div>
+            </FormField>
+
+            {/* Select an Editor */}
+            <FormField
+              label="Select an Editor"
+              tooltip="Choose the IDE that will be launched in your workspace. The default editor is VS Code - Open Source. Select 'Custom Editor' for advanced configuration."
+            >
+              <EditorDropdown value={editor} onChange={setEditor} />
+            </FormField>
+
+            {/* AI Tools */}
+            <FormField
+              label="Add AI Tools"
+              tooltip="Select AI-powered coding assistants to install in your workspace. Tools marked with a checkmark are already authenticated with your account."
+            >
+              <AIToolsSection selected={aiTools} onChange={setAiTools} />
+            </FormField>
+
+            {/* Environment Settings */}
+            <div style={{ marginTop: 8 }}>
+              <EnvironmentSettings value={envSettings} onChange={setEnvSettings} />
+            </div>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={submitting}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              width: '100%',
+              height: 44,
+              fontSize: 15,
+              fontWeight: 600,
+              border: 'none',
+              borderRadius: 'var(--radius)',
+              background: submitting ? 'var(--accent-hover)' : 'var(--accent)',
+              color: '#fff',
+              cursor: submitting ? 'not-allowed' : 'pointer',
+              transition: 'background var(--transition)',
+            }}
+            onMouseEnter={(e) => { if (!submitting) e.currentTarget.style.background = 'var(--accent-hover)' }}
+            onMouseLeave={(e) => { if (!submitting) e.currentTarget.style.background = 'var(--accent)' }}
+          >
+            {submitting ? (
+              <>
+                <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                Creating Workspace…
+              </>
+            ) : (
+              'Create Workspace'
+            )}
+          </button>
+        </form>
+      </main>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  )
+}
