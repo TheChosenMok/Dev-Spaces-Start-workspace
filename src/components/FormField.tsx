@@ -10,7 +10,7 @@ interface FormFieldProps {
 
 export function FormField({ label, tooltip, children, htmlFor }: FormFieldProps) {
   return (
-    <div style={{ marginBottom: 28 }}>
+    <div style={{ marginBottom: 36 }}>
       <label
         htmlFor={htmlFor}
         style={{
