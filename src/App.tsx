@@ -2,10 +2,9 @@ import { CreateWorkspace } from './components/CreateWorkspace'
 
 const NAV_ITEMS = [
   { label: 'Workspaces', active: true },
-  { label: 'Templates', active: false },
-  { label: 'Secrets', active: false },
-  { label: 'SSH Keys', active: false },
-  { label: 'Settings', active: false },
+  { label: 'Agent Space', active: false },
+  { label: 'Devfile GUI', active: false },
+  { label: 'Backups', active: false },
 ]
 
 export default function App() {
@@ -34,8 +33,8 @@ export default function App() {
         >
           <div
             style={{
-              width: 28,
-              height: 28,
+              width: 30,
+              height: 30,
               borderRadius: 6,
               background: 'var(--accent)',
               display: 'flex',
@@ -43,13 +42,13 @@ export default function App() {
               justifyContent: 'center',
               color: '#fff',
               fontWeight: 700,
-              fontSize: 14,
+              fontSize: 16,
               flexShrink: 0,
             }}
           >
             W
           </div>
-          <span style={{ fontSize: 15, fontWeight: 600, color: '#ffffff' }}>Dev Spaces</span>
+          <span style={{ fontSize: 17, fontWeight: 600, color: '#ffffff' }}>Dev Spaces</span>
         </div>
 
         <nav style={{ flex: 1, padding: '0 8px' }}>
@@ -65,8 +64,8 @@ export default function App() {
                 border: 'none',
                 borderRadius: 6,
                 background: item.active ? '#1f1f1f' : 'transparent',
-                color: item.active ? '#ffffff' : '#a0a0a0',
-                fontSize: 14,
+                color: item.active ? '#ffffff' : '#c8c8c8',
+                fontSize: 16,
                 fontWeight: item.active ? 500 : 400,
                 cursor: 'pointer',
                 transition: 'background 150ms ease, color 150ms ease',
@@ -74,13 +73,13 @@ export default function App() {
               onMouseEnter={(e) => {
                 if (!item.active) {
                   e.currentTarget.style.background = '#161616'
-                  e.currentTarget.style.color = '#d0d0d0'
+                  e.currentTarget.style.color = '#ececec'
                 }
               }}
               onMouseLeave={(e) => {
                 if (!item.active) {
                   e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.color = '#a0a0a0'
+                  e.currentTarget.style.color = '#c8c8c8'
                 }
               }}
             >

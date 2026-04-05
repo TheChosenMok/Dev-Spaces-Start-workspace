@@ -70,9 +70,8 @@ export function CreateWorkspace() {
           <div
             style={{
               background: 'var(--surface)',
-              border: '1px solid var(--border)',
               borderRadius: 'var(--radius-lg)',
-              padding: 24,
+              padding: '24px 0',
               marginBottom: 24,
             }}
           >
