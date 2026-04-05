@@ -49,7 +49,7 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
             width: '100%',
             height: 38,
             padding: '0 12px',
-            fontSize: 14,
+            fontSize: 15,
             border: '1px solid var(--border)',
             borderRadius: 'var(--radius)',
             background: 'var(--surface)',
@@ -93,7 +93,7 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                   gap: 8,
                   width: '100%',
                   padding: '8px 12px',
-                  fontSize: 13,
+                  fontSize: 14,
                   border: 'none',
                   borderBottom: e.id === 'custom' ? 'none' : undefined,
                   borderTop: e.id === 'custom' ? '1px solid var(--border)' : 'none',
@@ -110,7 +110,7 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                 {hasBrandIcon(e.id) ? <BrandIcon id={e.id} size={16} /> : <Monitor size={12} />}
                 {e.label}
                 {e.isDefault && (
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)', fontWeight: 400 }}>default</span>
+                  <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)', fontWeight: 400 }}>default</span>
                 )}
               </button>
             ))}

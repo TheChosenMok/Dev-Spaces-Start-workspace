@@ -55,14 +55,14 @@ export function CreateWorkspace() {
             gap: 12,
           }}
         >
-          <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)' }}>Workspaces</span>
+          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text)' }}>Workspaces</span>
         </div>
       </header>
 
       {/* Main */}
       <main style={{ maxWidth: 720, padding: '32px 32px 64px' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Create Workspace</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 32 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>Create Workspace</h1>
+        <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginBottom: 32 }}>
           Configure and launch a new cloud development environment.
         </p>
 
@@ -109,7 +109,7 @@ export function CreateWorkspace() {
                       style={{
                         marginTop: 8,
                         padding: '8px 12px',
-                        fontSize: 13,
+                        fontSize: 14,
                         background: 'var(--warning-bg)',
                         border: '1px solid var(--warning-border)',
                         borderRadius: 6,
@@ -164,7 +164,7 @@ export function CreateWorkspace() {
               gap: 8,
               width: '100%',
               height: 44,
-              fontSize: 15,
+              fontSize: 16,
               fontWeight: 600,
               border: 'none',
               borderRadius: 'var(--radius)',

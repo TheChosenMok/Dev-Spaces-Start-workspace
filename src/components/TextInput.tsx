@@ -4,7 +4,7 @@ const baseStyle: React.CSSProperties = {
   width: '100%',
   height: 38,
   padding: '0 12px',
-  fontSize: 14,
+  fontSize: 15,
   border: '1px solid var(--border)',
   borderRadius: 'var(--radius)',
   background: 'var(--surface)',

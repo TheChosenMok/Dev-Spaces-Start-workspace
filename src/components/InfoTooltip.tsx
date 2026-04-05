@@ -44,7 +44,7 @@ export function InfoTooltip({ text }: InfoTooltipProps) {
             transform: 'translateX(-50%)',
             background: 'var(--text)',
             color: '#fff',
-            fontSize: 12,
+            fontSize: 13,
             lineHeight: 1.4,
             padding: '6px 10px',
             borderRadius: 6,

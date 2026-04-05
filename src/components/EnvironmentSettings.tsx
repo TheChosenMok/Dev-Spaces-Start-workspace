@@ -40,10 +40,10 @@ export function EnvironmentSettings({ value, onChange }: EnvironmentSettingsProp
           gap: 10,
           width: '100%',
           padding: '12px 16px',
-          fontSize: 14,
+          fontSize: 15,
           fontWeight: 600,
           border: 'none',
-          background: expanded ? '#fafafa' : 'var(--surface)',
+          background: 'var(--surface)',
           color: 'var(--text)',
           cursor: 'pointer',
           textAlign: 'left',
@@ -111,7 +111,7 @@ export function EnvironmentSettings({ value, onChange }: EnvironmentSettingsProp
                   }}
                 />
               </button>
-              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+              <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
                 {value.tempStorage ? 'Enabled' : 'Disabled'}
               </span>
             </div>

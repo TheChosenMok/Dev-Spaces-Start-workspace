@@ -43,13 +43,13 @@ export default function App() {
               justifyContent: 'center',
               color: '#fff',
               fontWeight: 700,
-              fontSize: 13,
+              fontSize: 14,
               flexShrink: 0,
             }}
           >
             W
           </div>
-          <span style={{ fontSize: 14, fontWeight: 600, color: '#ffffff' }}>Dev Spaces</span>
+          <span style={{ fontSize: 15, fontWeight: 600, color: '#ffffff' }}>Dev Spaces</span>
         </div>
 
         <nav style={{ flex: 1, padding: '0 8px' }}>
@@ -66,7 +66,7 @@ export default function App() {
                 borderRadius: 6,
                 background: item.active ? '#1f1f1f' : 'transparent',
                 color: item.active ? '#ffffff' : '#a0a0a0',
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: item.active ? 500 : 400,
                 cursor: 'pointer',
                 transition: 'background 150ms ease, color 150ms ease',

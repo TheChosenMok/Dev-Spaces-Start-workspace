@@ -36,7 +36,7 @@ export function CustomEditorModal({ onClose, onSave }: CustomEditorModalProps) {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 600 }}>Custom Editor Configuration</h3>
+          <h3 style={{ fontSize: 17, fontWeight: 600 }}>Custom Editor Configuration</h3>
           <button
             type="button"
             onClick={onClose}
@@ -47,17 +47,17 @@ export function CustomEditorModal({ onClose, onSave }: CustomEditorModalProps) {
         </div>
 
         <div style={{ marginBottom: 16 }}>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Editor Name</label>
+          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Editor Name</label>
           <TextInput value={name} onChange={(e) => setName(e.target.value)} placeholder="My Custom IDE" />
         </div>
 
         <div style={{ marginBottom: 16 }}>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Container Image</label>
+          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Container Image</label>
           <TextInput value={image} onChange={(e) => setImage(e.target.value)} placeholder="registry.example.com/editor:latest" />
         </div>
 
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>IDE Port</label>
+          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>IDE Port</label>
           <TextInput value={port} onChange={(e) => setPort(e.target.value)} placeholder="3000" style={{ width: 120 }} />
         </div>
 
@@ -68,7 +68,7 @@ export function CustomEditorModal({ onClose, onSave }: CustomEditorModalProps) {
             style={{
               height: 36,
               padding: '0 16px',
-              fontSize: 13,
+              fontSize: 14,
               fontWeight: 500,
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius)',
@@ -85,7 +85,7 @@ export function CustomEditorModal({ onClose, onSave }: CustomEditorModalProps) {
             style={{
               height: 36,
               padding: '0 16px',
-              fontSize: 13,
+              fontSize: 14,
               fontWeight: 500,
               border: 'none',
               borderRadius: 'var(--radius)',

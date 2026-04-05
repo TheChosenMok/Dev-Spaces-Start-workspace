@@ -16,7 +16,7 @@ export function FormField({ label, tooltip, children, htmlFor }: FormFieldProps)
         style={{
           display: 'flex',
           alignItems: 'center',
-          fontSize: 13,
+          fontSize: 14,
           fontWeight: 600,
           color: 'var(--text)',
           marginBottom: 6,

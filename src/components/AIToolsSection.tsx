@@ -53,7 +53,7 @@ export function AIToolsSection({ selected, onChange }: AIToolsSectionProps) {
               gap: 6,
               height: 30,
               padding: '0 10px',
-              fontSize: 13,
+              fontSize: 14,
               background: 'var(--accent-light)',
               color: 'var(--accent)',
               borderRadius: 6,
@@ -125,7 +125,7 @@ export function AIToolsSection({ selected, onChange }: AIToolsSectionProps) {
             padding: '4px 0',
           }}
         >
-          <div style={{ padding: '8px 12px', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ padding: '8px 12px', fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Available AI Tools
           </div>
           {AVAILABLE_TOOLS.map((tool) => {
@@ -141,7 +141,7 @@ export function AIToolsSection({ selected, onChange }: AIToolsSectionProps) {
                   gap: 10,
                   width: '100%',
                   padding: '10px 12px',
-                  fontSize: 13,
+                  fontSize: 14,
                   border: 'none',
                   background: isSelected ? 'var(--accent-light)' : 'transparent',
                   color: 'var(--text)',
@@ -170,7 +170,7 @@ export function AIToolsSection({ selected, onChange }: AIToolsSectionProps) {
                 {hasBrandIcon(tool.id) && <BrandIcon id={tool.id} size={20} />}
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 500 }}>{tool.name}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 1 }}>{tool.description}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 1 }}>{tool.description}</div>
                 </div>
                 {tool.authenticated && (
                   <span
@@ -178,7 +178,7 @@ export function AIToolsSection({ selected, onChange }: AIToolsSectionProps) {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 3,
-                      fontSize: 11,
+                      fontSize: 12,
                       color: 'var(--success)',
                       fontWeight: 500,
                       flexShrink: 0,
