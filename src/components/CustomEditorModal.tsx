@@ -1,16 +1,33 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { X } from 'lucide-react'
 import { TextInput } from './TextInput'
 
 interface CustomEditorModalProps {
   onClose: () => void
-  onSave: (config: { name: string; image: string; port: string }) => void
+  onSave: (config: { name: string; definition: string; image: string }) => void
+}
+
+const textareaStyle: CSSProperties = {
+  width: '100%',
+  minHeight: 88,
+  padding: '10px 12px',
+  fontSize: 15,
+  lineHeight: 1.45,
+  border: '1px solid var(--border)',
+  borderRadius: 'var(--radius)',
+  background: 'var(--surface)',
+  color: 'var(--text)',
+  outline: 'none',
+  resize: 'vertical',
+  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+  transition: 'border-color var(--transition), box-shadow var(--transition)',
+  boxSizing: 'border-box',
 }
 
 export function CustomEditorModal({ onClose, onSave }: CustomEditorModalProps) {
   const [name, setName] = useState('')
+  const [definition, setDefinition] = useState('')
   const [image, setImage] = useState('')
-  const [port, setPort] = useState('3000')
 
   return (
     <div
@@ -52,13 +69,26 @@ export function CustomEditorModal({ onClose, onSave }: CustomEditorModalProps) {
         </div>
 
         <div style={{ marginBottom: 16 }}>
-          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Container Image</label>
-          <TextInput value={image} onChange={(e) => setImage(e.target.value)} placeholder="registry.example.com/editor:latest" />
+          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Editor Definition</label>
+          <textarea
+            value={definition}
+            onChange={(e) => setDefinition(e.target.value)}
+            placeholder="YAML or JSON editor component definition"
+            style={textareaStyle}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border-focus)'
+              e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37,99,235,.12)'
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border)'
+              e.currentTarget.style.boxShadow = 'none'
+            }}
+          />
         </div>
 
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>IDE Port</label>
-          <TextInput value={port} onChange={(e) => setPort(e.target.value)} placeholder="3000" style={{ width: 120 }} />
+          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Container Image</label>
+          <TextInput value={image} onChange={(e) => setImage(e.target.value)} placeholder="registry.example.com/editor:latest" />
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
@@ -81,7 +111,7 @@ export function CustomEditorModal({ onClose, onSave }: CustomEditorModalProps) {
           </button>
           <button
             type="button"
-            onClick={() => onSave({ name, image, port })}
+            onClick={() => onSave({ name, definition, image })}
             style={{
               height: 36,
               padding: '0 16px',

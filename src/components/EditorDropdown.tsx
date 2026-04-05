@@ -5,13 +5,13 @@ import { CustomEditorModal } from './CustomEditorModal'
 import { BrandIcon, hasBrandIcon } from './BrandIcons'
 
 const EDITORS = [
-  { id: 'vscode-oss', label: 'Microsoft Visual Studio Code - Open Source', shortLabel: 'VS Code (OSS)', isDefault: true },
-  { id: 'vscode', label: 'Visual Studio Code', shortLabel: 'VS Code' },
-  { id: 'intellij', label: 'IntelliJ IDEA Ultimate', shortLabel: 'IntelliJ' },
-  { id: 'goland', label: 'GoLand', shortLabel: 'GoLand' },
-  { id: 'pycharm', label: 'PyCharm Professional', shortLabel: 'PyCharm' },
-  { id: 'webstorm', label: 'WebStorm', shortLabel: 'WebStorm' },
-  { id: 'custom', label: 'Custom Editor', shortLabel: 'Custom', isCustom: true as const },
+  { id: 'vscode-oss', label: 'Visual Studio Code - Open Source (Web)', isDefault: true },
+  { id: 'vscode', label: 'Visual Studio Code - Desktop (SSH)' },
+  { id: 'intellij', label: 'IntelliJ IDEA Ultimate' },
+  { id: 'goland', label: 'GoLand' },
+  { id: 'pycharm', label: 'PyCharm Professional' },
+  { id: 'webstorm', label: 'WebStorm' },
+  { id: 'custom', label: 'Custom Editor', isCustom: true as const },
 ]
 
 interface EditorDropdownProps {
@@ -92,7 +92,9 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
     }
   }
 
-  const displayLabel = selected ? selected.shortLabel : 'Select editor'
+  const displayLabel = selected ? selected.label : 'Select editor'
+  const showDefaultOnTrigger =
+    Boolean(selected && 'isDefault' in selected && selected.isDefault) && !open
 
   return (
     <>
@@ -156,6 +158,22 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
           >
             {displayLabel}
           </span>
+          {showDefaultOnTrigger && (
+            <span
+              style={{
+                flexShrink: 0,
+                marginLeft: 'auto',
+                padding: '2px 8px',
+                fontSize: 11,
+                fontWeight: 500,
+                borderRadius: 999,
+                background: 'rgba(37, 99, 235, 0.1)',
+                color: 'var(--accent)',
+              }}
+            >
+              default
+            </span>
+          )}
           <ChevronDown
             size={16}
             color="var(--text-muted)"
@@ -261,7 +279,7 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                           color: 'var(--accent)',
                         }}
                       >
-                        Recommended default
+                        default
                       </span>
                     )}
                   </span>

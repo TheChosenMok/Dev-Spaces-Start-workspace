@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Loader2, Rocket } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { FormField } from './FormField'
 import { TextInput } from './TextInput'
 import { BranchDropdown } from './BranchDropdown'
@@ -53,9 +53,39 @@ export function CreateWorkspace() {
             display: 'flex',
             alignItems: 'center',
             gap: 12,
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         >
           <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text)' }}>Workspaces</span>
+          <button
+            type="button"
+            className="header-grid-launcher"
+            aria-label="Open app grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 9px)',
+              gridTemplateRows: 'repeat(3, 9px)',
+              gap: 2,
+              marginLeft: 'auto',
+              padding: 4,
+              border: 'none',
+              background: 'transparent',
+              borderRadius: 6,
+            }}
+          >
+            {Array.from({ length: 9 }, (_, i) => (
+              <span
+                key={i}
+                style={{
+                  borderRadius: 2.5,
+                  background: '#ced4da',
+                  border: '1px solid #ced4da',
+                  boxSizing: 'border-box',
+                }}
+              />
+            ))}
+          </button>
         </div>
       </header>
 
@@ -133,7 +163,7 @@ export function CreateWorkspace() {
             {/* Select an Editor */}
             <FormField
               label="Select an Editor"
-              tooltip="Choose the IDE that will be launched in your workspace. The default editor is VS Code - Open Source. Select 'Custom Editor' for advanced configuration."
+              tooltip="Choose the IDE that will be launched in your workspace. The default editor is Visual Studio Code - Open Source (Web). Select 'Custom Editor' for advanced configuration."
             >
               <EditorDropdown value={editor} onChange={setEditor} />
             </FormField>
@@ -151,7 +181,7 @@ export function CreateWorkspace() {
               label="Temp Storage"
               tooltip="Enable ephemeral storage for temporary files. Data in temp storage does not persist across workspace restarts."
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <button
                   type="button"
                   onClick={() => setTempStorage(!tempStorage)}
@@ -181,9 +211,6 @@ export function CreateWorkspace() {
                     }}
                   />
                 </button>
-                <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
-                  {tempStorage ? 'Enabled' : 'Disabled'}
-                </span>
               </div>
             </FormField>
 
@@ -229,10 +256,7 @@ export function CreateWorkspace() {
                   Creating Workspace…
                 </>
               ) : (
-                <>
-                  <Rocket size={18} strokeWidth={2.25} aria-hidden />
-                  Create Workspace
-                </>
+                'Create Workspace'
               )}
             </button>
           </div>
