@@ -5,7 +5,6 @@ import { TextInput } from './TextInput'
 
 interface EnvSettings {
   containerImage: string
-  tempStorage: boolean
   memoryLimit: string
   cpuLimit: string
   devfilePath: string
@@ -51,7 +50,7 @@ export function EnvironmentSettings({ value, onChange }: EnvironmentSettingsProp
         }}
       >
         <Settings size={16} color="var(--text-secondary)" />
-        <span style={{ flex: 1 }}>Environment Settings</span>
+        <span style={{ flex: 1 }}>Advanced Settings</span>
         <ChevronDown
           size={16}
           style={{
@@ -65,6 +64,19 @@ export function EnvironmentSettings({ value, onChange }: EnvironmentSettingsProp
       {expanded && (
         <div style={{ padding: '20px 16px 0', borderTop: '1px solid var(--border)' }}>
           <FormField
+            label="Path to Devfile"
+            tooltip="Specify a custom path to your devfile. Overrides the default search for devfile.yaml or .devfile.yaml in the repository root."
+            htmlFor="devfile-path"
+          >
+            <TextInput
+              id="devfile-path"
+              value={value.devfilePath}
+              onChange={(e) => update({ devfilePath: e.target.value })}
+              placeholder="devfile.yaml"
+            />
+          </FormField>
+
+          <FormField
             label="Container Image"
             tooltip="Override the default Universal Developer Image. Specify a custom container image for your workspace runtime."
             htmlFor="container-image"
@@ -75,46 +87,6 @@ export function EnvironmentSettings({ value, onChange }: EnvironmentSettingsProp
               onChange={(e) => update({ containerImage: e.target.value })}
               placeholder="quay.io/devspaces/udi:latest"
             />
-          </FormField>
-
-          <FormField
-            label="Temp Storage"
-            tooltip="Enable ephemeral storage for temporary files. Data in temp storage does not persist across workspace restarts."
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <button
-                type="button"
-                onClick={() => update({ tempStorage: !value.tempStorage })}
-                style={{
-                  position: 'relative',
-                  width: 44,
-                  height: 24,
-                  borderRadius: 12,
-                  border: 'none',
-                  background: value.tempStorage ? 'var(--accent)' : '#d1d5db',
-                  cursor: 'pointer',
-                  transition: 'background var(--transition)',
-                  flexShrink: 0,
-                }}
-              >
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: 2,
-                    left: value.tempStorage ? 22 : 2,
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    background: '#fff',
-                    boxShadow: '0 1px 3px rgba(0,0,0,.2)',
-                    transition: 'left var(--transition)',
-                  }}
-                />
-              </button>
-              <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
-                {value.tempStorage ? 'Enabled' : 'Disabled'}
-              </span>
-            </div>
           </FormField>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -144,19 +116,6 @@ export function EnvironmentSettings({ value, onChange }: EnvironmentSettingsProp
               />
             </FormField>
           </div>
-
-          <FormField
-            label="Path to Devfile"
-            tooltip="Specify a custom path to your devfile. Overrides the default search for devfile.yaml or .devfile.yaml in the repository root."
-            htmlFor="devfile-path"
-          >
-            <TextInput
-              id="devfile-path"
-              value={value.devfilePath}
-              onChange={(e) => update({ devfilePath: e.target.value })}
-              placeholder="devfile.yaml"
-            />
-          </FormField>
         </div>
       )}
     </div>

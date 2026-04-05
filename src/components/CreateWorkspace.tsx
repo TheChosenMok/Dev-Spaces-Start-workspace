@@ -19,9 +19,9 @@ export function CreateWorkspace() {
   const [branch, setBranch] = useState('main')
   const [editor, setEditor] = useState('vscode-oss')
   const [aiTools, setAiTools] = useState<string[]>([])
+  const [tempStorage, setTempStorage] = useState(false)
   const [envSettings, setEnvSettings] = useState({
     containerImage: '',
-    tempStorage: false,
     memoryLimit: '',
     cpuLimit: '',
     devfilePath: '',
@@ -146,7 +146,48 @@ export function CreateWorkspace() {
               <AIToolsSection selected={aiTools} onChange={setAiTools} />
             </FormField>
 
-            {/* Environment Settings */}
+            {/* Temp Storage */}
+            <FormField
+              label="Temp Storage"
+              tooltip="Enable ephemeral storage for temporary files. Data in temp storage does not persist across workspace restarts."
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setTempStorage(!tempStorage)}
+                  style={{
+                    position: 'relative',
+                    width: 44,
+                    height: 24,
+                    borderRadius: 12,
+                    border: 'none',
+                    background: tempStorage ? 'var(--accent)' : '#d1d5db',
+                    cursor: 'pointer',
+                    transition: 'background var(--transition)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: 2,
+                      left: tempStorage ? 22 : 2,
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: '#fff',
+                      boxShadow: '0 1px 3px rgba(0,0,0,.2)',
+                      transition: 'left var(--transition)',
+                    }}
+                  />
+                </button>
+                <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+                  {tempStorage ? 'Enabled' : 'Disabled'}
+                </span>
+              </div>
+            </FormField>
+
+            {/* Advanced Settings */}
             <div style={{ marginTop: 8 }}>
               <EnvironmentSettings value={envSettings} onChange={setEnvSettings} />
             </div>

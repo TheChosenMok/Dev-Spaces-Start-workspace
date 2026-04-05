@@ -61,51 +61,53 @@ export default function App() {
   }, [])
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <aside
         className="app-sidebar"
         style={{
           width: 252,
+          maxWidth: 252,
+          flexGrow: 0,
           flexShrink: 0,
+          height: '100%',
+          minHeight: 0,
           background: '#0a0a0a',
           borderRight: '1px solid #1f1f1f',
           display: 'flex',
           flexDirection: 'column',
-          padding: '20px 0',
+          padding: '8px 0 20px',
           letterSpacing: '-0.02em',
+          overflow: 'hidden',
         }}
       >
         <div
           style={{
-            padding: '0 20px 24px',
+            padding: '10px 20px',
             display: 'flex',
             alignItems: 'center',
             gap: 10,
             borderBottom: '1px solid #1f1f1f',
-            marginBottom: 8,
+            marginBottom: 6,
           }}
         >
-          <div
+          <img
+            src="/icon.png"
+            alt=""
+            width={50}
+            height={50}
             style={{
-              width: 36,
-              height: 36,
-              borderRadius: 8,
-              background: 'var(--accent)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-              fontWeight: 700,
-              fontSize: 17,
+              borderRadius: 11,
               flexShrink: 0,
+              display: 'block',
+              objectFit: 'cover',
             }}
-          >
-            W
-          </div>
+          />
           <span
             style={{
               fontSize: 16,
-              fontWeight: 600,
+              fontWeight: 700,
+              lineHeight: '50px',
+              height: 50,
               color: '#ffffff',
               letterSpacing: '-0.025em',
             }}
@@ -114,7 +116,15 @@ export default function App() {
           </span>
         </div>
 
-        <nav style={{ flex: 1, padding: '0 8px' }}>
+        <nav
+          style={{
+            flex: 1,
+            minHeight: 0,
+            padding: '0 8px',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+          }}
+        >
           {NAV_ITEMS.map((item) => {
             const NavIcon = item.icon
             return (
@@ -305,7 +315,7 @@ export default function App() {
         </div>
       </aside>
 
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: 'auto' }}>
         {signedIn ? (
           <CreateWorkspace />
         ) : (
