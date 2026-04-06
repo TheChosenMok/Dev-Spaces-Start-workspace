@@ -4,6 +4,8 @@ import { useClickOutside } from '../hooks/useClickOutside'
 import { CustomEditorModal } from './CustomEditorModal'
 import { BrandIcon, hasBrandIcon } from './BrandIcons'
 
+const JETBRAINS_IDS = new Set(['intellij', 'goland', 'pycharm', 'webstorm'])
+
 const EDITORS = [
   { id: 'vscode-oss', label: 'Visual Studio Code - Open Source (Web)', isDefault: true },
   { id: 'vscode', label: 'Visual Studio Code - Desktop (SSH)' },
@@ -280,6 +282,56 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                         }}
                       >
                         default
+                      </span>
+                    )}
+                    {JETBRAINS_IDS.has(e.id) && (
+                      <span
+                        style={{
+                          display: 'block',
+                          marginTop: 2,
+                          fontSize: 11,
+                          fontWeight: 400,
+                          color: 'var(--text-muted)',
+                        }}
+                      >
+                        Provided by JetBrains under{' '}
+                        <a
+                          href="https://www.jetbrains.com/legal/docs/toolbox/user/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(ev) => ev.stopPropagation()}
+                          style={{
+                            color: 'var(--accent)',
+                            textDecoration: 'underline',
+                          }}
+                        >
+                          License
+                        </a>
+                      </span>
+                    )}
+                    {e.id === 'vscode' && (
+                      <span
+                        style={{
+                          display: 'block',
+                          marginTop: 2,
+                          fontSize: 11,
+                          fontWeight: 400,
+                          color: 'var(--text-muted)',
+                        }}
+                      >
+                        Provided by Microsoft under{' '}
+                        <a
+                          href="https://code.visualstudio.com/License"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(ev) => ev.stopPropagation()}
+                          style={{
+                            color: 'var(--accent)',
+                            textDecoration: 'underline',
+                          }}
+                        >
+                          License
+                        </a>
                       </span>
                     )}
                   </span>
