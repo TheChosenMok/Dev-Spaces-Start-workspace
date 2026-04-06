@@ -228,7 +228,7 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                   className="editor-dropdown-option"
                   style={{
                     display: 'flex',
-                    alignItems: 'flex-start',
+                    alignItems: 'center',
                     gap: 10,
                     width: '100%',
                     padding: '10px 10px',
@@ -237,7 +237,6 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                     border: 'none',
                     background: rowBg,
                     color: isSelected ? 'var(--accent)' : 'var(--text)',
-                    fontWeight: isSelected ? 600 : 400,
                     textAlign: 'left',
                     cursor: 'pointer',
                     transition: 'background var(--transition)',
@@ -252,7 +251,6 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                       justifyContent: 'center',
                       width: 28,
                       height: 28,
-                      marginTop: 1,
                       borderRadius: 6,
                       background: isSelected ? 'rgba(37, 99, 235, 0.12)' : 'var(--surface-muted)',
                       flexShrink: 0,
@@ -266,29 +264,56 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                       <Monitor size={15} color="var(--text-secondary)" strokeWidth={2} />
                     )}
                   </span>
-                  <span style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ display: 'block' }}>{e.label}</span>
-                    {e.isDefault && (
+                  <span
+                    style={{
+                      flex: '1 1 0%',
+                      minWidth: 0,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      gap: 2,
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 8,
+                        width: '100%',
+                        minWidth: 0,
+                        fontWeight: isSelected ? 600 : 400,
+                      }}
+                    >
                       <span
                         style={{
-                          display: 'inline-block',
-                          marginTop: 4,
-                          padding: '2px 8px',
-                          fontSize: 11,
-                          fontWeight: 500,
-                          borderRadius: 999,
-                          background: 'rgba(37, 99, 235, 0.1)',
-                          color: 'var(--accent)',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          minWidth: 0,
                         }}
                       >
-                        default
+                        {e.label}
                       </span>
-                    )}
+                      {e.isDefault && (
+                        <span
+                          style={{
+                            flexShrink: 0,
+                            padding: '2px 8px',
+                            fontSize: 11,
+                            fontWeight: 500,
+                            borderRadius: 999,
+                            background: 'rgba(37, 99, 235, 0.1)',
+                            color: 'var(--accent)',
+                          }}
+                        >
+                          default
+                        </span>
+                      )}
+                    </span>
                     {JETBRAINS_IDS.has(e.id) && (
                       <span
                         style={{
-                          display: 'block',
-                          marginTop: 2,
                           fontSize: 11,
                           fontWeight: 400,
                           color: 'var(--text-muted)',
@@ -312,8 +337,6 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                     {e.id === 'vscode' && (
                       <span
                         style={{
-                          display: 'block',
-                          marginTop: 2,
                           fontSize: 11,
                           fontWeight: 400,
                           color: 'var(--text-muted)',
@@ -340,7 +363,7 @@ export function EditorDropdown({ value, onChange }: EditorDropdownProps) {
                       size={18}
                       strokeWidth={2.5}
                       color="var(--accent)"
-                      style={{ flexShrink: 0, marginTop: 2 }}
+                      style={{ flexShrink: 0 }}
                       aria-hidden
                     />
                   ) : (
