@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
-import { Plus, X, Check, Box } from 'lucide-react'
+import { Plus, X, Check, Box, FileCode, Copy } from 'lucide-react'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { DependencyBrandIcon } from './DependencyBrandIcon'
 import { getDependencyBrandIcon } from './dependencySimpleIcons'
+import { getDevfileSnippetForComponent } from './envComponentDevfileSnippets'
 
 interface EnvComponent {
   id: string
@@ -90,17 +91,24 @@ function ComponentIcon({ brand, size }: { brand: string; size: number }) {
 
 export function EnvironmentComponentsSection({ selected, onChange }: EnvironmentComponentsSectionProps) {
   const [open, setOpen] = useState(false)
+  const [yamlPreview, setYamlPreview] = useState<EnvComponent | null>(null)
+  const [copyDone, setCopyDone] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   useClickOutside(rootRef, () => setOpen(false))
 
   useEffect(() => {
     if (!open) return
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false)
+      if (e.key !== 'Escape') return
+      if (yamlPreview) {
+        setYamlPreview(null)
+        return
+      }
+      setOpen(false)
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [open])
+  }, [open, yamlPreview])
 
   function toggle(id: string) {
     onChange(
@@ -187,6 +195,7 @@ export function EnvironmentComponentsSection({ selected, onChange }: Environment
       </div>
 
       {open && (
+        <>
         <div
           role="presentation"
           style={{
@@ -207,14 +216,14 @@ export function EnvironmentComponentsSection({ selected, onChange }: Environment
             aria-labelledby="env-components-dialog-title"
             onClick={(e) => e.stopPropagation()}
             style={{
-              width: 'min(560px, 100%)',
-              maxHeight: 'min(640px, 90vh)',
+              width: 'min(920px, 100%)',
+              maxHeight: 'min(88vh, 900px)',
               overflow: 'auto',
               background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius-lg)',
               boxShadow: 'var(--shadow-lg)',
-              padding: 20,
+              padding: 24,
             }}
           >
             <h2
@@ -229,32 +238,22 @@ export function EnvironmentComponentsSection({ selected, onChange }: Environment
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))',
-                gap: 10,
+                gridTemplateColumns: 'repeat(auto-fill, minmax(172px, 1fr))',
+                gap: 12,
               }}
             >
               {AVAILABLE_COMPONENTS.map((c) => {
                 const isSelected = selected.includes(c.id)
                 return (
-                  <button
-                    type="button"
+                  <div
                     key={c.id}
-                    onClick={() => toggle(c.id)}
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                      gap: 8,
-                      minHeight: 88,
-                      padding: '12px 14px',
-                      textAlign: 'left',
+                      position: 'relative',
                       borderRadius: 'var(--radius)',
                       border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
                       background: isSelected ? 'var(--accent-light)' : 'var(--surface-muted)',
-                      color: 'var(--text)',
-                      cursor: 'pointer',
+                      minHeight: 88,
                       transition: 'border-color var(--transition), background var(--transition)',
-                      position: 'relative',
                     }}
                   >
                     {isSelected && (
@@ -263,6 +262,7 @@ export function EnvironmentComponentsSection({ selected, onChange }: Environment
                           position: 'absolute',
                           top: 8,
                           right: 8,
+                          zIndex: 1,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -271,20 +271,80 @@ export function EnvironmentComponentsSection({ selected, onChange }: Environment
                           borderRadius: '50%',
                           background: 'var(--accent)',
                           color: '#fff',
+                          pointerEvents: 'none',
                         }}
                         aria-hidden
                       >
                         <Check size={12} strokeWidth={3} />
                       </span>
                     )}
-                    <ComponentIcon brand={c.brand} size={24} />
-                    <span style={{ fontSize: 14, fontWeight: 600, paddingRight: isSelected ? 22 : 0, lineHeight: 1.25 }}>
-                      {c.name}
-                    </span>
-                    {c.subtitle && (
-                      <span style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: -4 }}>{c.subtitle}</span>
-                    )}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => toggle(c.id)}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        gap: 8,
+                        width: '100%',
+                        minHeight: 88,
+                        boxSizing: 'border-box',
+                        padding: '12px 14px',
+                        paddingBottom: 36,
+                        paddingRight: isSelected ? 30 : 14,
+                        textAlign: 'left',
+                        border: 'none',
+                        background: 'transparent',
+                        color: 'var(--text)',
+                        cursor: 'pointer',
+                        borderRadius: 'var(--radius)',
+                      }}
+                    >
+                      <ComponentIcon brand={c.brand} size={24} />
+                      <span style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.25 }}>{c.name}</span>
+                      {c.subtitle && (
+                        <span style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: -4 }}>{c.subtitle}</span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`View example devfile YAML for ${c.name}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setCopyDone(false)
+                        setYamlPreview(c)
+                      }}
+                      style={{
+                        position: 'absolute',
+                        bottom: 8,
+                        right: 8,
+                        zIndex: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 30,
+                        height: 30,
+                        borderRadius: 6,
+                        border: '1px solid var(--border)',
+                        background: 'var(--surface)',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        transition: 'color var(--transition), border-color var(--transition), background var(--transition)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = 'var(--accent)'
+                        e.currentTarget.style.color = 'var(--accent)'
+                        e.currentTarget.style.background = 'var(--accent-light)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'var(--border)'
+                        e.currentTarget.style.color = 'var(--text-muted)'
+                        e.currentTarget.style.background = 'var(--surface)'
+                      }}
+                    >
+                      <FileCode size={15} aria-hidden />
+                    </button>
+                  </div>
                 )
               })}
             </div>
@@ -308,6 +368,130 @@ export function EnvironmentComponentsSection({ selected, onChange }: Environment
             </div>
           </div>
         </div>
+
+        {yamlPreview && (
+          <div
+            role="presentation"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 110,
+              background: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 16,
+            }}
+            onClick={() => setYamlPreview(null)}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="env-component-yaml-title"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: 'min(560px, 100%)',
+                maxHeight: 'min(72vh, 640px)',
+                display: 'flex',
+                flexDirection: 'column',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-lg)',
+                boxShadow: 'var(--shadow-lg)',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                  padding: '14px 16px',
+                  borderBottom: '1px solid var(--border)',
+                  flexShrink: 0,
+                }}
+              >
+                <h3
+                  id="env-component-yaml-title"
+                  style={{ fontSize: 15, fontWeight: 600, margin: 0, color: 'var(--text)' }}
+                >
+                  Devfile snippet — {yamlPreview.name}
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const text = getDevfileSnippetForComponent(yamlPreview.id, yamlPreview.name)
+                      void navigator.clipboard.writeText(text).then(() => {
+                        setCopyDone(true)
+                        window.setTimeout(() => setCopyDone(false), 2000)
+                      })
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '6px 12px',
+                      fontSize: 13,
+                      fontWeight: 500,
+                      border: '1px solid var(--border)',
+                      borderRadius: 6,
+                      background: 'var(--surface-muted)',
+                      color: 'var(--text)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Copy size={14} aria-hidden />
+                    {copyDone ? 'Copied' : 'Copy'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setYamlPreview(null)}
+                    aria-label="Close"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 34,
+                      height: 34,
+                      border: 'none',
+                      borderRadius: 6,
+                      background: 'transparent',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </div>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '10px 16px 0', lineHeight: 1.45 }}>
+                Example <code style={{ fontSize: 12 }}>components</code> entry you can merge into your devfile. Image tags are
+                illustrative; adjust for your registry and version policy.
+              </p>
+              <pre
+                style={{
+                  margin: '12px 16px 16px',
+                  padding: 14,
+                  fontSize: 12,
+                  lineHeight: 1.5,
+                  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                  background: 'var(--surface-muted)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius)',
+                  overflow: 'auto',
+                  flex: 1,
+                  minHeight: 0,
+                  color: 'var(--text)',
+                }}
+              >
+                <code>{getDevfileSnippetForComponent(yamlPreview.id, yamlPreview.name)}</code>
+              </pre>
+            </div>
+          </div>
+        )}
+        </>
       )}
     </div>
   )
