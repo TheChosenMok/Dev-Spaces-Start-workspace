@@ -4,6 +4,7 @@ import { FormField } from './FormField'
 import { TextInput } from './TextInput'
 import { BranchDropdown } from './BranchDropdown'
 import { EditorDropdown } from './EditorDropdown'
+import { EnvironmentComponentsSection } from './EnvironmentComponentsSection'
 import { AIToolsSection } from './AIToolsSection'
 import { EnvironmentSettings } from './EnvironmentSettings'
 
@@ -18,6 +19,7 @@ export function CreateWorkspace() {
   const [repoUrl, setRepoUrl] = useState('')
   const [branch, setBranch] = useState('main')
   const [editor, setEditor] = useState('vscode-oss')
+  const [environmentComponents, setEnvironmentComponents] = useState<string[]>([])
   const [aiTools, setAiTools] = useState<string[]>([])
   const [tempStorage, setTempStorage] = useState(false)
   const [envSettings, setEnvSettings] = useState({
@@ -166,6 +168,16 @@ export function CreateWorkspace() {
               tooltip="Choose the IDE that will be launched in your workspace. The default editor is Visual Studio Code - Open Source (Web). Select 'Custom Editor' for advanced configuration."
             >
               <EditorDropdown value={editor} onChange={setEditor} />
+            </FormField>
+
+            <FormField
+              label="Select Environment Components"
+              tooltip="Choose language runtimes and stacks to layer into your workspace image. You can pick multiple components."
+            >
+              <EnvironmentComponentsSection
+                selected={environmentComponents}
+                onChange={setEnvironmentComponents}
+              />
             </FormField>
 
             {/* AI Tools */}
