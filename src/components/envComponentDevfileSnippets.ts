@@ -1,5 +1,60 @@
 /** Representative devfile v2 `components` snippet per environment component id. */
 
+export interface DevfileSnippetEnvVar {
+  name: string
+  value: string
+}
+
+export interface DevfileSnippetEndpoint {
+  /** Display name; if blank after trim, defaults to `http-<targetPort>` in YAML. */
+  name: string
+  targetPort: number
+}
+
+/** References a `volume` component name elsewhere in the devfile (e.g. `projects`, `m2`). */
+export interface DevfileSnippetVolumeMount {
+  name: string
+  path: string
+}
+
+export interface DevfileSnippetOptions {
+  env?: DevfileSnippetEnvVar[]
+  endpoints?: DevfileSnippetEndpoint[]
+  volumeMounts?: DevfileSnippetVolumeMount[]
+  /** Kubernetes-style quantity, e.g. `2Gi`, `512Mi`. Omitted if blank. */
+  memoryLimit?: string
+  memoryRequest?: string
+  cpuLimit?: string
+  cpuRequest?: string
+  /** When `false`, emits `mountSources: false`. When `true` or omitted, field is omitted (devfile default is true). */
+  mountSources?: boolean
+  /** Container path where project sources are mounted when `mountSources` is true. */
+  sourceMapping?: string
+}
+
+function yamlDoubleQuotedString(s: string): string {
+  return `"${s
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t')}"`
+}
+
+/** Unquoted when safe; otherwise double-quoted (Devfile / YAML 1.2 friendly). */
+function yamlScalar(s: string): string {
+  if (s === '') return '""'
+  if (/^(true|false|null|~)$/i.test(s)) return yamlDoubleQuotedString(s)
+  if (/^[\w./-]+$/.test(s)) return s
+  return yamlDoubleQuotedString(s)
+}
+
+function endpointYamlName(displayName: string, targetPort: number): string {
+  const t = displayName.trim()
+  if (t) return t
+  return `http-${targetPort}`
+}
+
 const COMPONENT_IMAGES: Record<string, string> = {
   'java-11': 'registry.access.redhat.com/ubi8/openjdk-11:latest',
   'java-17': 'registry.access.redhat.com/ubi8/openjdk-17:latest',
@@ -65,13 +120,77 @@ const COMPONENT_IMAGES: Record<string, string> = {
   'bash-5': 'docker.io/library/debian:bookworm-slim',
 }
 
-export function getDevfileSnippetForComponent(id: string, displayName: string): string {
+export function getDevfileSnippetForComponent(
+  id: string,
+  displayName: string,
+  options?: DevfileSnippetOptions,
+): string {
   const image = COMPONENT_IMAGES[id]
   const name = id.replace(/[^a-z0-9-]/gi, '-')
   const img = image ?? `quay.io/devspaces/udi:latest  # ${displayName}`
-  return `components:
-  - name: ${name}
-    container:
-      image: ${img}
-`
+
+  const env = (options?.env ?? []).filter((e) => e.name.trim() !== '')
+  const endpoints = (options?.endpoints ?? []).filter(
+    (e) => Number.isInteger(e.targetPort) && e.targetPort >= 1 && e.targetPort <= 65535,
+  )
+  const volumeMounts = (options?.volumeMounts ?? []).filter(
+    (v) => v.name.trim() !== '' && v.path.trim() !== '',
+  )
+
+  const memoryLimit = options?.memoryLimit?.trim()
+  const memoryRequest = options?.memoryRequest?.trim()
+  const cpuLimit = options?.cpuLimit?.trim()
+  const cpuRequest = options?.cpuRequest?.trim()
+  const sourceMapping = options?.sourceMapping?.trim()
+
+  const lines = [`components:`, `  - name: ${name}`, `    container:`, `      image: ${img}`]
+
+  if (options?.mountSources === false) {
+    lines.push(`      mountSources: false`)
+  }
+
+  if (sourceMapping) {
+    lines.push(`      sourceMapping: ${yamlScalar(sourceMapping)}`)
+  }
+
+  if (memoryLimit) {
+    lines.push(`      memoryLimit: ${yamlScalar(memoryLimit)}`)
+  }
+  if (memoryRequest) {
+    lines.push(`      memoryRequest: ${yamlScalar(memoryRequest)}`)
+  }
+  if (cpuLimit) {
+    lines.push(`      cpuLimit: ${yamlScalar(cpuLimit)}`)
+  }
+  if (cpuRequest) {
+    lines.push(`      cpuRequest: ${yamlScalar(cpuRequest)}`)
+  }
+
+  if (env.length > 0) {
+    lines.push(`      env:`)
+    for (const e of env) {
+      lines.push(`        - name: ${yamlScalar(e.name.trim())}`)
+      lines.push(`          value: ${yamlScalar(e.value)}`)
+    }
+  }
+
+  if (endpoints.length > 0) {
+    lines.push(`      endpoints:`)
+    for (const e of endpoints) {
+      const epName = endpointYamlName(e.name, e.targetPort)
+      lines.push(`        - name: ${yamlScalar(epName)}`)
+      lines.push(`          targetPort: ${e.targetPort}`)
+      lines.push(`          exposure: public`)
+    }
+  }
+
+  if (volumeMounts.length > 0) {
+    lines.push(`      volumeMounts:`)
+    for (const v of volumeMounts) {
+      lines.push(`        - name: ${yamlScalar(v.name.trim())}`)
+      lines.push(`          path: ${yamlScalar(v.path.trim())}`)
+    }
+  }
+
+  return `${lines.join('\n')}\n`
 }
